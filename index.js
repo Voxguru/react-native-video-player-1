@@ -336,6 +336,16 @@ export default class VideoPlayer extends Component {
     this.showControls();
   }
 
+  onAudioBecomingNoisy = () => {
+    this.setState({ isPlaying: false })
+  }
+
+  onAudioFocusChanged = (event: { hasAudioFocus: boolean }) => {
+    if (this.state.isPlaying && !event.hasAudioFocus) {
+      this.setState({ isPlaying: false })
+    }
+  }
+  
   renderStartButton() {
     const { customStyles } = this.props;
     return (
@@ -476,6 +486,10 @@ export default class VideoPlayer extends Component {
           onLoad={this.onLoad}
           source={video}
           resizeMode={resizeMode}
+          disableFocus={true} // disables audio focus and wake lock (default false)
+          onAudioBecomingNoisy={this.onAudioBecomingNoisy} // Callback when audio is becoming noisy - should pause video
+          onAudioFocusChanged={this.onAudioFocusChanged} // Callback when audio focus has been lost - pause if focus has been lost
+
         />
         <View
           style={[
